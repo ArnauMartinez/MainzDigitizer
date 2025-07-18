@@ -14,9 +14,8 @@ class Trigger:
         self._direction: TriggerMode = params.get("direction", TriggerMode.RISING_EDGE)
         self._bitmask: int = params.get("bitmask", 0)
         self._external: ExternalTrigger = params.get("external")
-        self._thresholds: list[int] = params.get("thresholds") # Tags are called levels inside trigger
-        self._window: int = params.get("window", 0) # Number of samples acquired per trigger in each channel
-        self._post_trigger: int = params.get("post_trigger", 0) # Percentage of samples acquired after the trigger event
+        self._thresholds: dict[int, int] = params.get("thresholds") # Tags are called levels inside trigger
+        
 
     def copy(self):
         return Trigger({
@@ -24,6 +23,4 @@ class Trigger:
             "bitmask": self._bitmask,
             "external": self._external,
             "thresholds": self._thresholds.copy(),
-            "window": self._window,
-            "post_trigger": self._post_trigger
         })

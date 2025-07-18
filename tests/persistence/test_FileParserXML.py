@@ -28,7 +28,7 @@ class TestFileParserXML:
             "family": "xx740",
             "version": "80",
             "serial": "174",
-            "channels": {"value":"32"},
+            "channels": {"value":"4"},
             "voltagerange": {"low": "0.0", "hi": "2.0"},
             "windows": {
             "window": [
@@ -51,7 +51,7 @@ class TestFileParserXML:
     def settings_expected_result(self):
         settings = {
             "id": "1",
-            "digitizer": "9641E17EA872CAED059B06194120AE02",
+            "digitizer": "230",
             "dcoffsets": {
                 "dcoffset": [{"channel": "0", "value":"32768"},
                              {"channel": "1", "value":"32768"},
@@ -79,7 +79,7 @@ class TestFileParserXML:
                            'body': '8144 8142 8148 8141 8142 8144'}, 
                  'id': '1', 
                  'settings': '2', 
-                 'digitizer': '0A708183A6AB2BF6A3D944461802EAA8', 
+                 'digitizer': '230', 
                  'timestamp': '21109891', 
                  'clocktime': '1558428702'}
         return event

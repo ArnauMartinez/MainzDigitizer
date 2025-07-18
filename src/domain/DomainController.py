@@ -1,9 +1,10 @@
-from Digitizer import Digitizer
-from Settings import Settings
-from Trigger import Trigger
-from Event import Event
+from .Digitizer import Digitizer
+from .Settings import Settings
+from .Trigger import Trigger, TriggerMode, ExternalTrigger
+from .Event import Event
 from typing import Optional, cast
-from persistence.PersistenceController import PersistenceController
+from ..persistence.PersistenceController import PersistenceController
+from ..persistence.dtos import DigitizerDTO, SettingsDTO, EventDTO, TriggerDTO
 from datetime import datetime
 import pandas as pd
 import re
@@ -41,74 +42,102 @@ class DomainController:
         # Example implementation, adjust as needed
         [digitizers_raw, settings_raw, events_raw] = self._persistence_controller.load_xml(file_path)
 
-        for digitizer_raw in digitizers_raw:
-            d = self.digitizer_translator(digitizer_raw)
+        for digitizer_dto in digitizers_raw:
+            d = self.digitizer_translator(digitizer_dto)
             self._digitizer[d.id] = d
 
-        for setting_raw in settings_raw:
-            s = self.settings_translator(setting_raw)
+        for setting_dto in settings_raw:
+            s = self.settings_translator(setting_dto)
             self._settings[s.id] = s
 
-        for event_raw in events_raw:
-            e = self.event_translator(event_raw)
+        for event_dto in events_raw:
+            e = self.event_translator(event_dto)
             self._events[e.id] = e
 
 
-    def digitizer_translator(self,digitizer: dict) -> Digitizer:
+    def digitizer_translator(self,digitizer: DigitizerDTO) -> Digitizer:
 
         params = {
-            "id": digitizer.get("id"),
-            "family": digitizer.get("family"),
-            "version": digitizer.get("version"),
-            "serial_number": digitizer.get("serial"),
-            "num_channels": int(digitizer.get("channels", {}).get("value", 0)),
-            "bits": int(digitizer.get("resolution", {}).get("bits", 0)),
-            "frequency": float(digitizer.get("frequency", {}).get("hz", 0)),
-            "max_samples": int(digitizer.get("maxsamples", {}).get("maxsamples",0)),
-            "channel_groups": digitizer.get("channelgroups", {}).get("capable", 0),
-            "zero_supression": bool(digitizer.get("zerosupression", {}).get("capable", 0)),
-            "inspection": bool(digitizer.get("inspection", {}).get("capable", 0)),
-            "dual_edge": bool(digitizer.get("dualedge", {}).get("capable", 0)),
-            "voltage_range": (
-                float(digitizer.get("voltagerange", {}).get("low", 0.0)),
-                float(digitizer.get("voltagerange", {}).get("hi", 0.0))
-            ),
-            "windows": [int(w.get("size")) for w in digitizer.get("windows", {}).get("window", [])]
+            "id": digitizer.id,
+            "family": digitizer.family,
+            "version": digitizer.version,
+            "serial_number": digitizer.serial,
+            "num_channels": digitizer.channels,
+            "bits": digitizer.resolution,
+            "frequency": digitizer.frequency,
+            "max_samples": digitizer.max_samples,
+            "channel_groups": digitizer.channel_groups,
+            "zero_suppression": digitizer.zero_suppression,
+            "inspection": digitizer.inspection,
+            "dual_edge": digitizer.dual_edge,
+            "voltage_range": digitizer.voltage_range,
+            "windows": digitizer.windows,
         }
         return Digitizer(params)
     
 
-    def event_translator(self,event: dict) -> Event:
-        trace: list[int] = [int(x) for x in re.split(r"[ \n]",cast(str, event.get("trace",0)))]
+    def event_translator(self,event: EventDTO) -> Event:
+
         params = {
-            "id": cast(int,event.get("id")),
-            "settings": self._settings.get(cast(int,event.get("settings"))),
-            "digitizer": self._digitizer.get(cast(str,event.get("digitizer"))),
-            "time_stamp": cast(int,event.get("time_stamp")),
-            "clock_time": datetime.fromtimestamp(int(event.get("clocktime") / 100)), #type: ignore
-            "trigger_shift": int(event.get("triggershift", {}).get("samples", 0)),
-            "trace": pd.DataFrame(trace) if trace is not None else pd.DataFrame()
+            "id": event.id,
+            "settings": self._settings.get(event.settings_id),
+            "digitizer": self._digitizer.get(event.digitizer_id),
+            "time_stamp": event.time_stamp,
+            "clock_time": event.clock_time,
+            "trigger_shift": event.trigger_shift,
+            "trace": {k: pd.DataFrame(t) for k, t in event.trace.items()}
         }
+        assert len(event.trace) < self._digitizer.get(event.digitizer_id).num_channels
         return Event(params)
+    
 
 
-    def settings_translator(self, settings: dict) -> Settings:
-        trigger_dir: dict = cast(dict,settings.get("trigger"))
-        trigger_params = {
-            "direction": cast(str,trigger_dir.get("direction")),
-            "bitmask": cast(int, trigger_dir.get("mask")),
-            "external": cast(str, trigger_dir.get("external")),
-            "thresholds": [cast(int,cast(dict,x).get("value")) for x in cast(list,trigger_dir.get("level"))],
-            "window": cast(int, settings.get("window", {}).get("size")),
-            "post_trigger": float(cast(str,settings.get("posttrigger", {}).get("value")).strip('%'))
-        }
-        
+    def settings_translator(self, settings: SettingsDTO) -> Settings:
+        T: Trigger = self._trigger_translator(settings.trigger)
+
         params = {
-            "id": cast(int, settings.get("id")),
-            "digitizer": self._digitizer.get(cast(str, settings.get("digitizer"))),
-            "dc_offsets": [cast(int,cast(dict,x).get("value")) for x in cast(list,cast(dict,trigger_dir.get("dcoffsets")).get("dcoffset"))],
-            "trigger": Trigger(trigger_params),
-            "channels": cast(int, settings.get("channels", {}).get("mask"))
+            "id": settings.id,
+            "digitizer": self._digitizer.get(settings.digitizer_id),
+            "dc_offsets": settings.dc_offsets,
+            "trigger": T,
+            "window": settings.window,
+            "post_trigger": settings.post_trigger,
+            "channels": settings.channels_mask,
+
         }
 
         return Settings(params)
+    
+
+    def _trigger_translator(self, trigger: TriggerDTO) -> Trigger:
+
+        translateDir = {
+            "rising": TriggerMode.RISING_EDGE,
+            "falling": TriggerMode.FALLING_EDGE,
+        }
+        translateExternal = {
+            "acq": ExternalTrigger.ACQ,
+            "both": ExternalTrigger.BOTH,
+            "disabled": ExternalTrigger.DISABLED
+        }
+        
+        params = {
+            "direction": translateDir.get(trigger.direction, TriggerMode.RISING_EDGE),
+            "bitmask": trigger.bitmask,
+            "external": translateExternal.get(trigger.external, ExternalTrigger.DISABLED),
+            "thresholds": trigger.thresholds
+        }
+        return Trigger(params)
+    
+
+    def printDigitizers(self):
+        for digitizer in self._digitizer.values():
+            print(digitizer)
+    
+    def printSettings(self):
+        for setting in self._settings.values():
+            print(setting)
+    
+    def printEvents(self):
+        for event in self._events.values():
+            print(event)

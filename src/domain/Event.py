@@ -1,6 +1,6 @@
 import pandas as pd
-from Settings import Settings
-from Digitizer import Digitizer
+from .Settings import Settings
+from .Digitizer import Digitizer
 from datetime import datetime
 
 class Event:
@@ -11,7 +11,7 @@ class Event:
         self._time_stamp: int = params.get("time_stamp") 
         self._clock_time: datetime = params.get("clock_time")
         self._trigger_shift: int = params.get("trigger_shift", 0)
-        self._trace: pd.DataFrame = params.get("trace")
+        self._trace: dict[int, pd.DataFrame] = params.get("trace")
 
 
     @property
@@ -51,8 +51,11 @@ class Event:
             "clock_time": self._clock_time
         })
         new_event._trigger_shift = self._trigger_shift
-        new_event._trace = self._trace.copy() 
+        new_event._trace = {k: v.copy() for k, v in self._trace.items()} if self._trace is not None else None
         return new_event
+    
+    def __str__(self):
+        return f"Event(id={self._id}, settings_id={self.settings_id}, digitizer_id={self.digitizer_id}, time_stamp={self._time_stamp}, clock_time={self._clock_time}, trigger_shift={self._trigger_shift})"
     
     
 
