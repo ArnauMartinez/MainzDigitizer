@@ -1,10 +1,9 @@
-from domain.DomainController import DomainController
-from utils import select_file
+from caenParser import select_file, Parser
 
 
 
 def main():
-    dc = DomainController()
+    dc = Parser()
     dc.loadFile(select_file())
     dc.printDigitizers()
     dc.printSettings()
