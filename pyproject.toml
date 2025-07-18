@@ -1,0 +1,3 @@
+[tool.setuptools]
+packages = ["caen_parser"]
+package-dir = {"" = "src"}

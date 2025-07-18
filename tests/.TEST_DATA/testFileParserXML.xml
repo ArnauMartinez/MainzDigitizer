@@ -1,0 +1,42 @@
+<caendigitizer>
+<digitizer id="230" family="xx740" version="80"
+serial="174">
+<channels value="32"></channels>
+<voltagerange low="0.0" hi="2.0"></voltagerange>
+<windows>
+<window size="192"></window>
+<window size="384"></window>
+<window size="768"></window>
+<window size="1536"></window>
+<window size="3072"></window>
+<window size="6144"></window>
+<window size="12288"></window>
+<window size="24576"></window>
+<window size="49152"></window>
+<window size="98304"></window>
+<window size="196608"></window>
+</windows>
+</digitizer>
+<settings id="1" digitizer="9641E17EA872CAED059B06194120AE02">
+<dcoffsets>
+<dcoffset channel="0" value="32768"></dcoffset>
+<dcoffset channel="1" value="32768"></dcoffset>
+<dcoffset channel="2" value="32768"></dcoffset>
+<dcoffset channel="3" value="32768"></dcoffset>
+</dcoffsets>
+<trigger direction="rising" mask="0" external="acq">
+<level channel="0" value="0"></level>
+<level channel="1" value="0"></level>
+<level channel="2" value="0"></level>
+<level channel="3" value="0"></level>
+</trigger>
+<window size="192"></window>
+<posttrigger value="5.0%"></posttrigger>
+<channels mask="0"></channels>
+</settings>
+<event id="1" settings="2" digitizer="0A708183A6AB2BF6A3D944461802EAA8"
+timestamp="21109891" clocktime="1558428702">
+<triggershift samples="0"></triggershift>
+<trace channel="0">8144 8142 8148 8141 8142 8144</trace>
+</event>
+</caendigitizer>
