@@ -3,11 +3,10 @@ from .Settings import Settings
 from .Trigger import Trigger, TriggerMode, ExternalTrigger
 from .Event import Event
 from typing import Optional, cast
-from ..persistence.PersistenceController import PersistenceController
-from ..persistence.dtos import DigitizerDTO, SettingsDTO, EventDTO, TriggerDTO
-from datetime import datetime
+from caenParser.persistence.PersistenceController import PersistenceController
+from caenParser.persistence.dtos import DigitizerDTO, SettingsDTO, EventDTO, TriggerDTO
 import pandas as pd
-import re
+
 
 
 class DomainController:

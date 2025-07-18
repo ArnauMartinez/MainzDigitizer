@@ -1,5 +1,5 @@
 {
-    "python.analysis.extraPaths": ["./src"],
+    "python.analysis.extraPaths": ["./src/caenParser"],
     "files.exclude": {
         "**/__pycache__": true,
         "**/.pytest_cache":true 

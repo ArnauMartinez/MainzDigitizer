@@ -3,8 +3,7 @@ from typing import Optional, cast
 import re 
 from datetime import datetime
 
-from src.utils import DeepDict
-from src.persistence.dtos import DigitizerDTO, SettingsDTO, EventDTO, TriggerDTO
+from .dtos import DigitizerDTO, SettingsDTO, EventDTO, TriggerDTO
 
 class FileParserXML:
 

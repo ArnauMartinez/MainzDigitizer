@@ -1,5 +1,5 @@
-from src.domain.DomainController import DomainController
-from src.utils.utils import select_file
+from domain.DomainController import DomainController
+from utils import select_file
 
 
 

@@ -1,4 +1,4 @@
-from src.persistence.FileParserXML import FileParserXML
+from .FileParserXML import FileParserXML
 
 
 
