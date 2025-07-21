@@ -1,4 +1,4 @@
-from persistence.FileParserXML import FileParserXML
+from persistence.FileParserXML_1 import FileParserXML
 from utils.DeepDict import DeepDict
 
 

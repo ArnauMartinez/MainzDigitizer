@@ -1,4 +1,4 @@
-from .FileParserXML import FileParserXML
+from .FileParserXML_1 import FileParserXML
 
 
 
@@ -17,6 +17,7 @@ class PersistenceController:
         parser = FileParserXML()
         parser.parse_xml(file_path)
         return [parser.digitizers, parser.settings, parser.events]
+    
     
     
     

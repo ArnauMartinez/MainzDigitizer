@@ -3,7 +3,7 @@ from typing import Optional, cast
 import re 
 from datetime import datetime
 
-from .dtos import DigitizerDTO, SettingsDTO, EventDTO, TriggerDTO
+from caenParser.persistence.dtos import DigitizerDTO, SettingsDTO, EventDTO, TriggerDTO
 
 class FileParserXML:
 
@@ -126,7 +126,7 @@ class FileParserXML:
 
         traces = {}
         for trace in node.findall("trace"):
-            key = trace.get("channel")
+            key = int(trace.get("channel"))
             if key is None:
                 raise ValueError("Trace channel attribute is missing")
             

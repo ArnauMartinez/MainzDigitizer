@@ -1,11 +1,14 @@
 from .Digitizer import Digitizer
 from .Settings import Settings
 from .Trigger import Trigger, TriggerMode, ExternalTrigger
-from .Event import Event
+from .Event import Event, MeasureMagnitudeEnum
 from typing import Optional, cast
 from caenParser.persistence.PersistenceController import PersistenceController
 from caenParser.persistence.dtos import DigitizerDTO, SettingsDTO, EventDTO, TriggerDTO
 import pandas as pd
+import sys
+import ROOT
+
 
 
 
@@ -15,18 +18,8 @@ class DomainController:
         self._settings: dict[int, Settings] = dict()
         self._events: dict[int, Event] = dict()
         self._persistence_controller = PersistenceController()
+        self.measure_magnitude = MeasureMagnitudeEnum.ADC_COUNTS  # Default measure magnitude
 
-    @property
-    def digitizer(self):
-        return {k: v.copy() for k, v in self._digitizer.items()}
-
-    @property
-    def settings(self):
-        return {k: v.copy() for k, v in self._settings.items()}
-
-    @property
-    def events(self):
-        return {k: v.copy() for k, v in self._events.items()}
 
     def get_digitizer(self, id: str) -> Optional[Digitizer]:
         return self._digitizer.get(id, None)
@@ -84,7 +77,7 @@ class DomainController:
             "time_stamp": event.time_stamp,
             "clock_time": event.clock_time,
             "trigger_shift": event.trigger_shift,
-            "trace": {k: pd.DataFrame(t) for k, t in event.trace.items()}
+            "trace": {k: pd.DataFrame(t, columns=['Amplitude']) for k, t in event.trace.items()}
         }
         assert len(event.trace) < self._digitizer.get(event.digitizer_id).num_channels
         return Event(params)
@@ -128,6 +121,34 @@ class DomainController:
         }
         return Trigger(params)
     
+    def get_data_frame(self, event_id: int, channel:int) -> Optional[pd.DataFrame]:
+        event = self._events.get(event_id)
+        if event:
+            return event.get_channel_data(channel, self.measure_magnitude)
+        return None
+    
+    def get_t_graph(self, event_id: int, channel:int) -> Optional[ROOT.TGraph]:
+        df = self.get_data_frame(event_id, channel)
+        if df is not None:
+            return ROOT.TGraph(df["Time"].to_numpy(), df['Amplitude'].to_numpy())
+    
+    @property
+    def events_ids(self) -> list[int]:
+        return list(self._events.keys())
+
+    def get_triggered_channels(self, event_id: int) -> list[int]:
+        event = self._events.get(event_id)
+        if event:
+            return event.triggered_channels()
+        print(f"WARNING: Event with ID {event_id} not found.", file=sys.stderr)
+        return []
+
+
+    def set_measure_magnitude(self, name: str) -> None:
+        try:
+            self.measure_magnitude = MeasureMagnitudeEnum[name.upper()]
+        except KeyError:
+            raise ValueError(f"Invalid measure magnitude name: {name}. Valid options are: {[e.name for e in MeasureMagnitudeEnum]}")
 
     def printDigitizers(self):
         for digitizer in self._digitizer.values():
@@ -140,3 +161,4 @@ class DomainController:
     def printEvents(self):
         for event in self._events.values():
             print(event)
+
