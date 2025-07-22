@@ -3,30 +3,30 @@ from typing import Optional, cast
 import re 
 from datetime import datetime
 
-from caenParser.persistence.dtos import DigitizerDTO, SettingsDTO, EventDTO, TriggerDTO
+from .FileParser import FileParser
+from .dtos import DigitizerDTO, SettingsDTO, EventDTO, TriggerDTO
 
-class FileParserXML:
+
+
+class FileParserXML(FileParser):
 
     def __init__(self):
-        self._level = 0
-        self._digitizers: list[DigitizerDTO] = []
-        self._settings: list[SettingsDTO] = []
-        self._events: list[EventDTO] = []
+        super().__init__()
 
-
-    def parse_xml(self, file_path: str) -> None:
-        """
-        Parses an XML file and returns its content as a dictionary.
-        
-        :param file_path: Path to the XML file.
-        :return: Dictionary representation of the XML content.
-        """
+    
+    def open(self, file_path):
         try:
-            tree = ET.parse(file_path)
-            root = tree.getroot()
+            self._fileObj = ET.parse(file_path)
         except ET.ParseError as e:
-            raise ValueError(f"Error parsing XML file: {e}")
+            raise ValueError(f"Error opening XML file: {e}")
+        
 
+    def parse(self) -> None:
+        
+        if self._fileObj is None:
+            raise ValueError("File not opened")
+        
+        root = self._fileObj.getroot()
         self.traverse_tree(root)
         
     
@@ -49,17 +49,7 @@ class FileParserXML:
             else:
                 raise ValueError(f"Unknown tag: {child.tag}")
     
-    @property
-    def digitizers(self):
-        return [d.copy() for d in self._digitizers]
-    
-    @property
-    def settings(self):
-        return [s.copy() for s in self._settings]
-    
-    @property
-    def events(self):
-        return [e.copy() for e in self._events]
+   
     
     def _traverse_digitizer(self, node: ET.Element) -> DigitizerDTO:
         """
@@ -162,10 +152,3 @@ class FileParserXML:
         )
     
  
-if __name__ == "__main__":
-    file_path = "/Users/arnaumartinezara/Documents/Mainz/Parser/tests/.TEST_DATA/testFileParserXML.xml"
-    parser = FileParserXML()
-    parser.parse_xml(file_path)
-    print("Digitizers:", parser.digitizers)
-    print("Settings:", parser.settings)
-    print("Events:", parser.events)

@@ -29,8 +29,9 @@ PYBIND11_MODULE(caen_cpp, m) {
 
     py::class_<CBinaryIn::header>(m, "Header")
         .def_readwrite("s_size", &CBinaryIn::header::s_size)
-        .def_readwrite("s_type", &CBinaryIn::header::s_type);
-        
+        .def_readwrite("s_type", &CBinaryIn::header::s_type)
+        .def_static("size", [](){ return sizeof(CBinaryIn::header); });
+
 
     py::class_<CBinaryIn::DigitizerDescriptor>(m, "DigitizerDescriptor")
         .def_readwrite("s_id", &CBinaryIn::DigitizerDescriptor::s_id)
@@ -45,13 +46,15 @@ PYBIND11_MODULE(caen_cpp, m) {
         .def_readwrite("s_maxSamples", &CBinaryIn::DigitizerDescriptor::s_maxSamples)
         .def_readwrite("s_capflags", &CBinaryIn::DigitizerDescriptor::s_capflags)
         .def_readwrite("s_vlow", &CBinaryIn::DigitizerDescriptor::s_vlow)
-        .def_readwrite("s_vhigh", &CBinaryIn::DigitizerDescriptor::s_vhigh);
+        .def_readwrite("s_vhigh", &CBinaryIn::DigitizerDescriptor::s_vhigh)
+        .def_static("size", [](){ return sizeof(CBinaryIn::DigitizerDescriptor); });
 
 
     py::class_<CBinaryIn::DigitizerSettings>(m, "DigitizerSettings")
         .def_readwrite("s_header", &CBinaryIn::DigitizerSettings::s_header)
         .def_readwrite("s_DCOffsets", &CBinaryIn::DigitizerSettings::s_DCOffsets)
-        .def_readwrite("s_TriggerLevels", &CBinaryIn::DigitizerSettings::s_TriggerLevels);
+        .def_readwrite("s_TriggerLevels", &CBinaryIn::DigitizerSettings::s_TriggerLevels)
+        .def_static("size", [](){ return sizeof(CBinaryIn::DigitizerSettings); });
 
 
     py::class_<CBinaryIn::DigitizerSettingsFixedHeader>(m, "DigitizerSettingsFixedHeader")
@@ -67,7 +70,8 @@ PYBIND11_MODULE(caen_cpp, m) {
 
     py::class_<CBinaryIn::WaveformData>(m, "WaveformData")
         .def_readwrite("s_header", &CBinaryIn::WaveformData::s_header)
-        .def_readwrite("s_trace", &CBinaryIn::WaveformData::s_trace);
+        .def_readwrite("s_trace", &CBinaryIn::WaveformData::s_trace)
+        .def_static("size", [](){ return sizeof(CBinaryIn::WaveformData); });
 
 
     py::class_<CBinaryIn::WaveformFixedHeader>(m, "WaveformFixedHeader")

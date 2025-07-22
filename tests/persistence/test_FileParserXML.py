@@ -1,4 +1,4 @@
-from persistence.FileParserXML_1 import FileParserXML
+from persistence.FileParserXML import FileParserXML
 from utils.DeepDict import DeepDict
 
 
@@ -6,7 +6,7 @@ class TestFileParserXML:
     def test_parse_xml(self, test_data_dir):
         parser = FileParserXML()
         file_path = test_data_dir / "testFileParserXML.xml"
-        parser.parse_xml(file_path)
+        parser.parse(file_path)
         assert parser.digitizers == [self.digitizer_expected_result()]
         assert parser.settings == [self.settings_expected_result()]
         assert parser.events == [self.event_expected_result()]

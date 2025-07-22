@@ -1,5 +1,6 @@
 from enum import Enum, auto
 
+#Should consider it refactoring Enums to utils so that it is translated in persistence
 class TriggerMode(Enum):
     RISING_EDGE = auto()
     FALLING_EDGE = auto()

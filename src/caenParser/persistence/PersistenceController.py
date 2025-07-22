@@ -1,5 +1,5 @@
-from .FileParserXML_1 import FileParserXML
-
+from .FileParserXML import FileParserXML
+from .FileParserRAW import FileParserRAW
 
 
 class PersistenceController:
@@ -7,16 +7,20 @@ class PersistenceController:
     def __init__(self):
         pass
 
-    def load_xml(self, file_path: str):
-        """
-        Loads an XML file and returns its content as a dictionary.
-        
-        :param file_path: Path to the XML file.
-        :return: Dictionary representation of the XML content.
-        """
-        parser = FileParserXML()
-        parser.parse_xml(file_path)
-        return [parser.digitizers, parser.settings, parser.events]
+    def load(self, file_path: str):
+
+        if file_path.endswith('.xml'):
+            parser = FileParserXML()
+        elif file_path.endswith('.raw'):
+            parser = FileParserRAW()
+        parser.open(file_path)
+        parser.parse()
+        info = [parser.digitizers, parser.settings, parser.events]
+        parser.close()
+        return info
+    
+    
+
     
     
     
