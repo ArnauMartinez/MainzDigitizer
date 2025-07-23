@@ -3,8 +3,8 @@ from typing import Optional, cast
 import re 
 from datetime import datetime
 
-from .FileParser import FileParser
-from .dtos import DigitizerDTO, SettingsDTO, EventDTO, TriggerDTO
+from caenParser.persistence.FileParser import FileParser
+from caenParser.persistence.dtos import DigitizerDTO, SettingsDTO, EventDTO, TriggerDTO
 
 
 

@@ -1,5 +1,5 @@
-from .FileParserXML import FileParserXML
-from .FileParserRAW import FileParserRAW
+from .scope import FileParserXML
+from .scope import FileParserRAW
 
 
 class PersistenceController:
