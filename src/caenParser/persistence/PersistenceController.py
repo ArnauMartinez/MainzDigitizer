@@ -11,7 +11,7 @@ class PersistenceController:
 
         if file_path.endswith('.xml'):
             parser = FileParserXML()
-        elif file_path.endswith('.raw'):
+        elif file_path.endswith('.bin'):
             parser = FileParserRAW()
         parser.open(file_path)
         parser.parse()

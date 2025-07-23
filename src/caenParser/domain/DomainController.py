@@ -32,7 +32,7 @@ class DomainController:
 
     def loadFile(self, file_path: str) -> None:
         # Example implementation, adjust as needed
-        [digitizers_raw, settings_raw, events_raw] = self._persistence_controller.load_xml(file_path)
+        [digitizers_raw, settings_raw, events_raw] = self._persistence_controller.load(file_path)
 
         for digitizer_dto in digitizers_raw:
             d = self.digitizer_translator(digitizer_dto)
@@ -130,8 +130,8 @@ class DomainController:
     def get_t_graph(self, event_id: int, channel:int) -> Optional[ROOT.TGraph]:
         df = self.get_data_frame(event_id, channel)
         if df is not None:
-            return ROOT.TGraph(df["Time"].to_numpy(), df['Amplitude'].to_numpy())
-    
+            return ROOT.TGraph(len(df), df["Time"].to_numpy(dtype='float64'), df['Amplitude'].to_numpy(dtype='float64'))
+
     @property
     def events_ids(self) -> list[int]:
         return list(self._events.keys())

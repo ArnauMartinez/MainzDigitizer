@@ -1,4 +1,4 @@
-from caen_cpp import CBinaryIn, Header, DigitizerDescriptor, DigitizerSettings, DigitizerSettingsFixedHeader, WaveformData, WaveformFixedheader 
+from caen_cpp import CBinaryIn, Header, DigitizerDescriptor, DigitizerSettings, DigitizerSettingsFixedHeader, WaveformData, WaveformFixedHeader 
 from .FileParser import FileParser
 from .dtos import DigitizerDTO, SettingsDTO, EventDTO, TriggerDTO
 from enum import Enum, auto
@@ -79,7 +79,7 @@ class FileParserRAW(FileParser):
             channel_groups= int((desc.s_capflags & CBinaryIn.cap_hasGroups) > 0),
             zero_suppression=bool(desc.s_capflags & CBinaryIn.cap_canZsuppress),
             inspection=bool(desc.s_capflags & CBinaryIn.cap_canInspect),
-            dual_edge=bool(desc.s_capflags & CBinaryIn.cap_canDualEdge),
+            dual_edge=bool(desc.s_capflags & CBinaryIn.cap_DualEdgeClock),
             voltage_range=(desc.s_vlow/1000, desc.s_vhigh/10000), # Descriptor uses mV, convert to V
             windows= [-1] # Placeholder for windows, as this is not provided in the descriptor
         )

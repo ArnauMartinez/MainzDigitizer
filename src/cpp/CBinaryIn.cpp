@@ -49,6 +49,21 @@
 #include <stdexcept>
 #include <system_error>
 
+// Definition of static const members (required when taking their address for pybind11)
+const uint32_t CBinaryIn::tp_DigitizerDescription;
+const uint32_t CBinaryIn::tp_DigitizerSettings;
+const uint32_t CBinaryIn::tp_TraceData;
+
+const uint32_t CBinaryIn::cap_hasGroups;
+const uint32_t CBinaryIn::cap_canZsuppress;
+const uint32_t CBinaryIn::cap_canInspect;
+const uint32_t CBinaryIn::cap_DualEdgeClock;
+
+const uint32_t CBinaryIn::trg_ExternalOutput;
+const uint32_t CBinaryIn::trg_TriggerOnExtTrg;
+const uint32_t CBinaryIn::trg_TriggerOnBoth;
+const uint32_t CBinaryIn::trg_ExtTrigDisabled;
+const uint32_t CBinaryIn::trg_Rising;
 
 /**
  * CBinaryIn
