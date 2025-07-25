@@ -11,7 +11,6 @@ class Digitizer:
         self._serial_number: str= params.get("serial_number")
 
         self._num_channels: int = params.get("num_channels")
-        print(type(self._num_channels))
         self._bits: float = params.get("bits")
         self._frequency : float = params.get("frequency")
         self._max_samples: int = params.get("max_samples")

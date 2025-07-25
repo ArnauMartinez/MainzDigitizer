@@ -11,7 +11,7 @@ class FileParser:
 
     def open(self, file_path: str):
         pass 
-    def parse(self, file_path):
+    def parse(self):
         # Parsing logic here
         pass
 
