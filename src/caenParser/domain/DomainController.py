@@ -135,6 +135,14 @@ class DomainController:
     @property
     def events_ids(self) -> list[int]:
         return list(self._events.keys())
+    
+    @property 
+    def digitizers_ids(self) -> list[str]:
+        return list(self._digitizer.keys())
+    
+    @property
+    def settings_ids(self) -> list[str]:
+        return list(self._settings.keys())
 
     def get_triggered_channels(self, event_id: int) -> list[int]:
         event = self._events.get(event_id)
@@ -162,3 +170,7 @@ class DomainController:
         for event in self._events.values():
             print(event)
 
+    def clear(self):
+        self._events.clear()
+        self._digitizer.clear()
+        self._settings.clear()

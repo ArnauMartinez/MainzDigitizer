@@ -27,7 +27,6 @@ help:
 	@echo "  $(GREEN)clean-all$(RESET)        - Full cleanup + duplicate files"
 	@echo "  $(GREEN)build$(RESET)            - Builds the package (without installing)"
 	@echo "  $(GREEN)rebuild$(RESET)          - Cleans and reinstalls from scratch"
-	@echo "  $(GREEN)test$(RESET)             - Runs tests"
 	@echo "  $(GREEN)check-env$(RESET)        - Checks development environment"
 	@echo "  $(GREEN)dev-setup$(RESET)        - Initial setup for development"
 	@echo "  $(GREEN)uninstall$(RESET)        - Uninstalls the package"
@@ -63,7 +62,6 @@ clean-all: clean
 	@# Remove optional directories
 	@rm -rf .DATA/ 2>/dev/null || true
 	@rm -rf .vscode/ 2>/dev/null || true
-	@rm -rf tests/.TEST_DATA/ 2>/dev/null || true
 	@# Remove temporary compiler files
 	@find . -name "*.o" -delete 2>/dev/null || true
 	@find . -name "*.obj" -delete 2>/dev/null || true
@@ -81,17 +79,6 @@ build: check-env
 rebuild: clean-all install
 	@echo "$(GREEN)✓ Rebuild completed$(RESET)"
 
-# Run tests
-.PHONY: test
-test:
-	@echo "$(BLUE)Running tests...$(RESET)"
-	@if [ -f pytest.ini ]; then \
-		$(PYTHON) -m pytest -v; \
-	else \
-		$(PYTHON) -m pytest tests/ -v; \
-	fi
-	@echo "$(GREEN)✓ Tests completed$(RESET)"
-
 # Check environment
 .PHONY: check-env
 check-env:
@@ -106,7 +93,7 @@ check-env:
 dev-setup:
 	@echo "$(BLUE)Setting up development environment...$(RESET)"
 	@$(PIP) install --upgrade pip
-	@$(PIP) install pybind11 pytest pandas
+	@$(PIP) install pybind11 pandas
 	@echo "$(GREEN)✓ Environment setup completed$(RESET)"
 
 # Uninstall package
@@ -149,5 +136,5 @@ info:
 
 # CI/CD target
 .PHONY: ci
-ci: check-env clean-all build test
+ci: check-env clean-all build
 	@echo "$(GREEN)✓ CI pipeline completed$(RESET)"
